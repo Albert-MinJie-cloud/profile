@@ -117,16 +117,14 @@ const galleryItems = [
   .gallery-image-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 160%;
     overflow: hidden;
+    aspect-ratio: 9 / 16;
   }
   .gallery-image {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: #f0f0f0;
     transition: transform 0.3s;
   }
   .gallery-item:hover .gallery-image {
