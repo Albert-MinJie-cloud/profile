@@ -147,29 +147,37 @@ async function handleStatsSource(url: URL, env: Env): Promise<Response> {
   return Response.json(results);
 }
 
-export async function onRequest(context: { request: Request; env: Env }): Promise<Response> {
-  const url = new URL(context.request.url);
-  const path = url.pathname.replace(/^\/api\/?/, '');
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
 
-  try {
-    switch (path) {
-      case 'filters':
-        return handleFilters(context.env);
-      case 'summary':
-        return handleSummary(url, context.env);
-      case 'orders':
-        return handleOrders(url, context.env);
-      case 'stats/monthly':
-        return handleStatsMonthly(url, context.env);
-      case 'stats/influencer':
-        return handleStatsInfluencer(url, context.env);
-      case 'stats/source':
-        return handleStatsSource(url, context.env);
-      default:
-        return Response.json({ error: 'Not found' }, { status: 404 });
+    // 只处理 /api/* 请求，其他交给静态资源
+    if (!url.pathname.startsWith('/api/')) {
+      return env.ASSETS.fetch(request);
     }
-  } catch (e: any) {
-    console.error('API Error:', e.message, e.stack);
-    return Response.json({ error: e.message }, { status: 500 });
+
+    const path = url.pathname.replace(/^\/api\/?/, '');
+
+    try {
+      switch (path) {
+        case 'filters':
+          return handleFilters(env);
+        case 'summary':
+          return handleSummary(url, env);
+        case 'orders':
+          return handleOrders(url, env);
+        case 'stats/monthly':
+          return handleStatsMonthly(url, env);
+        case 'stats/influencer':
+          return handleStatsInfluencer(url, env);
+        case 'stats/source':
+          return handleStatsSource(url, env);
+        default:
+          return Response.json({ error: 'Not found' }, { status: 404 });
+      }
+    } catch (e: any) {
+      console.error('API Error:', e.message);
+      return Response.json({ error: e.message }, { status: 500 });
+    }
   }
-}
+};
