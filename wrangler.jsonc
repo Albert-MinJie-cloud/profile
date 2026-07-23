@@ -1,8 +1,21 @@
 {
-  "name": "profile",
-  "compatibility_date": "2026-07-08",
-  "assets": {
-    "directory": "./dist",
-    "not_found_handling": "single-page-application"
-  }
+	"name": "profile",
+	"compatibility_date": "2026-07-08",
+	"pages_build_output_dir": "./dist",
+	"assets": {
+		"directory": "./dist",
+		"not_found_handling": "single-page-application"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "ad-orders-db",
+			"database_id": "5caa03f2-a416-428a-8f11-34bb14958796"
+		},
+		{
+			"binding": "ad_orders_db",
+			"database_name": "ad-orders-db",
+			"database_id": "5caa03f2-a416-428a-8f11-34bb14958796"
+		}
+	]
 }
