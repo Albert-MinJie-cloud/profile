@@ -19,4 +19,21 @@ const works = defineCollection({
   })
 });
 
-export const collections = { works };
+const reviews = defineCollection({
+  loader: glob({
+    pattern: '**/*.md',
+    base: './src/content/reviews'
+  }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.string(),
+    files: z.array(z.object({
+      name: z.string(), // 文件显示名称
+      type: z.enum(['ppt', 'word', 'excel', 'pdf']),
+      url: z.string(), // 相对 public 的路径，如 /reviews/xxx.pdf
+    })),
+  })
+});
+
+export const collections = { works, reviews };

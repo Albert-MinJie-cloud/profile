@@ -1,0 +1,168 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+// 生成所有复盘报告的静态路径
+export async function getStaticPaths() {
+  const reviews = await getCollection("reviews");
+  return reviews.map((review) => ({
+    params: { slug: review.id },
+    props: { review },
+  }));
+}
+
+const { review } = Astro.props;
+
+const typeLabels = {
+  ppt: 'PPT',
+  word: 'Word',
+  excel: 'Excel',
+  pdf: 'PDF',
+};
+---
+
+<BaseLayout title={review.data.title} description={review.data.description}>
+  <article class="review-detail container">
+    <div class="detail-header">
+      <div class="type-tags">
+        {review.data.files.map(file => (
+          <span class={`type-tag type-${file.type}`}>{typeLabels[file.type]}</span>
+        ))}
+      </div>
+      <h1>{review.data.title}</h1>
+      <div class="meta">
+        <span>{review.data.date}</span>
+      </div>
+      <p class="detail-desc">{review.data.description}</p>
+    </div>
+
+    <div class="files">
+      {review.data.files.map(file => (
+        <div class="file-block">
+          <div class="file-header">
+            <h3>{file.name}</h3>
+            <a href={file.url} target="_blank" class="open-link">在新窗口打开 ↗</a>
+          </div>
+          {file.type === 'pdf' ? (
+            <iframe class="preview-frame" src={file.url} title={file.name} />
+          ) : (
+            <>
+              <iframe class="preview-frame" data-office-src={file.url} title={file.name} />
+              <p class="preview-note">Office 文件预览依赖微软在线服务，需部署到公网后生效；本地开发请使用「在新窗口打开」查看。</p>
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+
+    <div class="back-btn">
+      <a href="/#reviews">← 返回复盘报告列表</a>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .review-detail {
+    padding: 60px 24px;
+  }
+  .detail-header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .type-tags {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .type-tag {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  .type-pdf { background: #fef2f2; color: #dc2626; }
+  .type-ppt { background: #fff7ed; color: #ea580c; }
+  .type-word { background: #eff6ff; color: #2563eb; }
+  .type-excel { background: #f0fdf4; color: #16a34a; }
+  .detail-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 16px;
+    line-height: 1.3;
+    color: var(--text-primary);
+  }
+  .meta {
+    color: var(--text-secondary);
+  }
+  .detail-desc {
+    max-width: 640px;
+    margin: 16px auto 0;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .files {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .file-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .file-header h3 {
+    color: var(--text-primary);
+  }
+  .open-link {
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  .preview-frame {
+    width: 100%;
+    min-height: 600px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+  .preview-note {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: #999;
+  }
+  .back-btn {
+    max-width: 800px;
+    margin: 48px auto 0;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .back-btn a {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  @media (max-width: 640px) {
+    .detail-header h1 {
+      font-size: 1.6rem;
+    }
+    .preview-frame {
+      min-height: 400px;
+    }
+  }
+</style>
+
+<script>
+  // Office 文件通过微软在线查看器预览，需要完整公网 URL，运行时拼接当前站点域名
+  document.querySelectorAll('[data-office-src]').forEach((iframe) => {
+    const fullUrl = window.location.origin + iframe.getAttribute('data-office-src');
+    iframe.src =
+      'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(fullUrl);
+  });
+</script>

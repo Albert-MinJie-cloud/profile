@@ -1,0 +1,94 @@
+---
+import { getCollection } from 'astro:content';
+const reviews = await getCollection('reviews');
+// 按时间倒序排列（date 为中文年月格式，如 "2022年10月"，需手动解析）
+function parseDate(str) {
+  const m = str.match(/(\d{4})\s*年\s*(\d{1,2})?\s*月/);
+  if (!m) return 0;
+  return Number(m[1]) * 100 + (m[2] ? Number(m[2]) : 0);
+}
+const sortedReviews = reviews.sort((a, b) => parseDate(b.data.date) - parseDate(a.data.date));
+
+const typeLabels = {
+  ppt: 'PPT',
+  word: 'Word',
+  excel: 'Excel',
+  pdf: 'PDF',
+};
+---
+
+<section id="reviews" class="container">
+  <h2 class="section-title">复盘报告</h2>
+  <div class="reviews-grid">
+    {sortedReviews.map(review => (
+      <a href={`/reviews/${review.id}`} class="review-card">
+        <div class="review-types">
+          {review.data.files.map(file => (
+            <span class={`type-tag type-${file.type}`}>{typeLabels[file.type]}</span>
+          ))}
+        </div>
+        <h3 class="review-title">{review.data.title}</h3>
+        <p class="review-desc">{review.data.description}</p>
+        <div class="review-footer">
+          <span>{review.data.date}</span>
+          <span class="view-detail">查看详情 →</span>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+  }
+  .review-card {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .review-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.1);
+  }
+  .review-types {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .type-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .type-pdf { background: #fef2f2; color: #dc2626; }
+  .type-ppt { background: #fff7ed; color: #ea580c; }
+  .type-word { background: #eff6ff; color: #2563eb; }
+  .type-excel { background: #f0fdf4; color: #16a34a; }
+  .review-title { font-size: 1.25rem; font-weight: 600; }
+  .review-desc { color: var(--text-secondary); font-size: 0.95rem; flex: 1; }
+  .review-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+  .view-detail { color: var(--accent); font-weight: 500; }
+  @media (max-width: 640px) {
+    .reviews-grid { grid-template-columns: 1fr; }
+  }
+</style>
