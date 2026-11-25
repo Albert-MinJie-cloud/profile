@@ -1,7 +1,7 @@
 ---
 const stats = [
-  { num: '1700W+', label: '累计活动曝光' },
-  { num: '5,750+', label: '累计招商达人' },
+  { num: '1800W+', label: '爆品玩具种草曝光' },
+  { num: '6,000+', label: '拥有达人资源' },
   { num: '61.5%', label: 'KOL投放爆文率' },
   { num: '10+', label: '操盘核心项目' },
 ];
@@ -120,7 +120,12 @@ const stats = [
     color: var(--accent);
     margin-bottom: 8px;
   }
-  .stat-label { color: var(--text-secondary); font-size: 0.95rem; }
+  .stat-label { color: var(--text-secondary); font-size: 0.95rem; white-space: nowrap; }
+  @media (max-width: 1100px) {
+    .stats-grid { gap: 24px; padding: 32px; }
+    .stat-num { font-size: 2rem; }
+    .stat-label { font-size: 0.85rem; }
+  }
   @media (max-width: 768px) {
     .hero-inner { grid-template-columns: 1fr; text-align: center; }
     .hero-desc { margin: 0 auto 36px; }
