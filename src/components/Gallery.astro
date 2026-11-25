@@ -1,99 +1,186 @@
 ---
-const galleryItems = [
+type GalleryItem = {
+  title: string;
+  category: string;
+  image: string;
+};
+
+// ============================================================
+// 图片上传入口
+// ------------------------------------------------------------
+// ① 把图片文件放进 public/gallery/  （品牌号笔记建议放 public/gallery/brand-notes/）
+// ② 在下面对应的数组里追加一条：
+//    { title: '笔记标题', category: '品牌号笔记', image: '/gallery/brand-notes/文件名.png' }
+// ③ 保存即可，页面会自动出现这张卡片，不需要改模板
+// ============================================================
+
+// 爆款案例：目前已有的 6 张图
+const viralCases: GalleryItem[] = [
+  { title: '小火车KOL笔记', category: '爆款案例', image: '/gallery/图片1.png' },
+  { title: '小火车KOL笔记', category: '爆款案例', image: '/gallery/图片2.png' },
+  { title: '小火车KOL笔记', category: '爆款案例', image: '/gallery/图片3.png' },
+  { title: '小火车KOL笔记', category: '爆款案例', image: '/gallery/图片4.png' },
+  { title: '小火车KOL笔记', category: '爆款案例', image: '/gallery/图片5.png' },
+  { title: '小火车KOL笔记', category: '爆款案例', image: '/gallery/图片6.png' },
+];
+
+// 品牌号笔记：图片放 public/gallery/brand-notes/，按上面注释的格式追加即可
+const brandNotes: GalleryItem[] = [
+  { title: '男宝必入 · 6 个益智玩具', category: '品牌号笔记', image: '/gallery/brand-notes/01-nanbao-6-toys.jpg' },
+  { title: '宠娃没道理 · 20 品牌宠粉', category: '品牌号笔记', image: '/gallery/brand-notes/02-chongwa-20-brands.jpg' },
+  { title: '25 周年 · 超HUI玩大礼包', category: '品牌号笔记', image: '/gallery/brand-notes/03-25anniversary-gift.jpg' },
+  { title: '周岁礼必入 · 4合1智趣火车', category: '品牌号笔记', image: '/gallery/brand-notes/04-4in1-smart-train.jpg' },
+  { title: '宅家必入 · STEAM 分球叠叠乐', category: '品牌号笔记', image: '/gallery/brand-notes/05-steam-blocks.jpg' },
+  { title: '主页笔记合辑 01', category: '品牌号笔记', image: '/gallery/brand-notes/06-profile-grid-01.jpg' },
+  { title: '主页笔记合辑 02', category: '品牌号笔记', image: '/gallery/brand-notes/07-profile-grid-02.jpg' },
+  { title: '主页笔记合辑 03', category: '品牌号笔记', image: '/gallery/brand-notes/08-profile-grid-03.jpg' },
+  { title: '主页笔记合辑 04', category: '品牌号笔记', image: '/gallery/brand-notes/09-profile-grid-04.jpg' },
+];
+
+const groups = [
   {
-    title: '小火车KOL笔记',
-    category: '数据成果',
-    image: '/gallery/图片1.png',
+    id: 'viral-cases',
+    title: '爆款案例',
+    desc: 'KOL 笔记爆文与投放数据成果',
+    items: viralCases,
   },
   {
-    title: '小火车KOL笔记',
-    category: '数据成果',
-    image: '/gallery/图片2.png',
-  },
-  {
-    title: '小火车KOL笔记',
-    category: '数据成果',
-    image: '/gallery/图片3.png',
-  },
-  {
-    title: '小火车KOL笔记',
-    category: '数据成果',
-    image: '/gallery/图片4.png',
-  },
-  {
-    title: '小火车KOL笔记',
-    category: '数据成果',
-    image: '/gallery/图片5.png',
-  },
-  {
-    title: '小火车KOL笔记',
-    category: '数据成果',
-    image: '/gallery/图片6.png',
+    id: 'brand-notes',
+    title: '品牌号笔记',
+    desc: '品牌账号自有内容与种草笔记',
+    items: brandNotes,
   },
 ];
 ---
 
 <section id="gallery" class="container" style="padding-top: 48px;">
   <h2 class="section-title">成果展示</h2>
-  <div class="gallery-grid">
-    {galleryItems.map((item, index) => (
-      <div
-        class="gallery-item"
-        data-index={index}
-      >
-        <div class="gallery-image-wrapper">
-          <img
-            src={item.image}
-            alt={item.title}
-            loading="lazy"
-            class="gallery-image"
-          />
-          <div class="gallery-overlay">
-            <div class="gallery-info">
-              <span class="gallery-category">{item.category}</span>
-              <h3 class="gallery-title">{item.title}</h3>
-            </div>
-            <div class="gallery-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-            </div>
-          </div>
-        </div>
+
+  {groups.map((group) => (
+    <div class="gallery-group" id={group.id}>
+      <div class="gallery-group-head">
+        <h3 class="gallery-subtitle">{group.title}</h3>
+        <span class="gallery-desc">{group.desc}</span>
+        {group.items.length > 0 && (
+          <span class="gallery-count">{group.items.length} 张</span>
+        )}
       </div>
-    ))}
-  </div>
+
+      {group.items.length > 0 ? (
+        <div class="gallery-grid">
+          {group.items.map((item, index) => (
+            <div class="gallery-item" data-group={group.id} data-index={index}>
+              <div class="gallery-image-wrapper">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  loading="lazy"
+                  class="gallery-image"
+                />
+                <div class="gallery-overlay">
+                  <div class="gallery-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                      <path d="M15 3h6v6" />
+                      <polyline points="9 21 3 21 3 15" />
+                      <line x1="21" y1="3" x2="14" y2="10" />
+                      <line x1="3" y1="21" x2="10" y2="14" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="gallery-footer">
+                <span class="gallery-footer-category">{item.category}</span>
+                <span class="gallery-footer-title" title={item.title}>{item.title}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="gallery-empty">
+          <div class="gallery-empty-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="3" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>
+          </div>
+          <p class="gallery-empty-title">品牌号笔记整理中</p>
+          <p class="gallery-empty-hint">图片准备好后会自动出现在这里</p>
+        </div>
+      )}
+    </div>
+  ))}
 </section>
 
-<div id="lightbox" class="lightbox" onclick="closeLightbox()">
-  <div class="lightbox-content" onclick="event.stopPropagation()">
-    <button class="lightbox-close" onclick="closeLightbox()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"/>
-        <line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
-    </button>
-    <button class="lightbox-prev" onclick="prevImage()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="15 18 9 12 15 6"/>
-      </svg>
-    </button>
-    <button class="lightbox-next" onclick="nextImage()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="9 18 15 12 9 6"/>
-      </svg>
-    </button>
-    <img id="lightbox-image" class="lightbox-image" src="" alt="" />
-    <div class="lightbox-caption">
-      <span id="lightbox-category"></span>
-      <span id="lightbox-title"></span>
+<div id="lightbox" class="lightbox">
+    <div class="lightbox-content">
+      <button class="lightbox-close" type="button" aria-label="关闭">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <button class="lightbox-prev" type="button" aria-label="上一张">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+      <button class="lightbox-next" type="button" aria-label="下一张">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
+      <img id="lightbox-image" class="lightbox-image" src="" alt="" />
+      <div class="lightbox-caption">
+        <span id="lightbox-category"></span>
+        <span id="lightbox-title"></span>
+      </div>
     </div>
-  </div>
 </div>
 
 <style>
+  .gallery-group { margin-bottom: 56px; }
+  .gallery-group:last-of-type { margin-bottom: 0; }
+
+  .gallery-group-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .gallery-subtitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    position: relative;
+    padding-left: 14px;
+  }
+  .gallery-subtitle::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 1em;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .gallery-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+  .gallery-count {
+    font-size: 0.8rem;
+    color: var(--accent);
+    background: rgba(37, 99, 235, 0.08);
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+
   .gallery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 360px));
@@ -136,7 +223,7 @@ const galleryItems = [
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -147,27 +234,6 @@ const galleryItems = [
   }
   .gallery-item:hover .gallery-overlay {
     opacity: 1;
-  }
-  .gallery-info {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .gallery-category {
-    display: inline-block;
-    padding: 3px 10px;
-    background: var(--accent);
-    color: white;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    width: fit-content;
-  }
-  .gallery-title {
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0;
   }
   .gallery-icon {
     position: absolute;
@@ -183,6 +249,55 @@ const galleryItems = [
   .gallery-item:hover .gallery-icon {
     transform: translate(-50%, -50%) scale(1);
   }
+  .gallery-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+  }
+  .gallery-footer-category {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    color: var(--accent);
+    background: rgba(37, 99, 235, 0.08);
+    border-radius: 999px;
+    padding: 2px 8px;
+    white-space: nowrap;
+  }
+  .gallery-footer-title {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gallery-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 48px 24px;
+    border: 1.5px dashed var(--border);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.55);
+    text-align: center;
+  }
+  .gallery-empty-icon { color: var(--border); margin-bottom: 4px; }
+  .gallery-empty-title {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .gallery-empty-hint {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+  }
+
   .lightbox {
     display: none;
     position: fixed;
@@ -265,9 +380,11 @@ const galleryItems = [
     font-weight: 500;
   }
   @media (max-width: 768px) {
+    .gallery-group { margin-bottom: 40px; }
     .gallery-grid {
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     }
+    .gallery-empty { padding: 32px 20px; }
     .lightbox-content {
       max-width: 95%;
       max-height: 100%;
@@ -297,12 +414,17 @@ const galleryItems = [
   }
 </style>
 
-<script is:inline>
-  const galleryItems = JSON.parse('[{"title":"小火车KOL笔记","category":"数据成果","image":"/gallery/图片1.png"},{"title":"小火车KOL笔记","category":"数据成果","image":"/gallery/图片2.png"},{"title":"小火车KOL笔记","category":"数据成果","image":"/gallery/图片3.png"},{"title":"小火车KOL笔记","category":"数据成果","image":"/gallery/图片4.png"},{"title":"小火车KOL笔记","category":"数据成果","image":"/gallery/图片5.png"},{"title":"小火车KOL笔记","category":"数据成果","image":"/gallery/图片6.png"}]');
-  let currentIndex = 0;
+<script is:inline define:vars={{ galleryGroups: groups.map((g) => ({ id: g.id, items: g.items })) }}>
+  // 灯箱：只在同一分组内前后切换
+  const groupsData = galleryGroups || [];
+  let activeGroupItems = [];
+  let activePos = 0;
 
-  function openLightbox(index) {
-    currentIndex = index;
+  function openLightbox(groupId, index) {
+    const group = groupsData.find((g) => g.id === groupId);
+    if (!group || !group.items.length) return;
+    activeGroupItems = group.items;
+    activePos = index;
     updateLightbox();
     document.getElementById('lightbox').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -314,32 +436,47 @@ const galleryItems = [
   }
 
   function updateLightbox() {
-    const item = galleryItems[currentIndex];
+    const item = activeGroupItems[activePos];
+    if (!item) return;
     document.getElementById('lightbox-image').src = item.image;
     document.getElementById('lightbox-image').alt = item.title;
     document.getElementById('lightbox-category').textContent = item.category;
     document.getElementById('lightbox-title').textContent = item.title;
+    const single = activeGroupItems.length <= 1;
+    document.querySelectorAll('.lightbox-prev, .lightbox-next').forEach((btn) => {
+      btn.style.display = single ? 'none' : '';
+    });
   }
 
   function prevImage() {
-    currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+    if (activeGroupItems.length < 2) return;
+    activePos = (activePos - 1 + activeGroupItems.length) % activeGroupItems.length;
     updateLightbox();
   }
 
   function nextImage() {
-    currentIndex = (currentIndex + 1) % galleryItems.length;
+    if (activeGroupItems.length < 2) return;
+    activePos = (activePos + 1) % activeGroupItems.length;
     updateLightbox();
   }
 
-  document.querySelector('.gallery-grid').addEventListener('click', function(e) {
+  document.addEventListener('click', function (e) {
     const item = e.target.closest('.gallery-item');
     if (item) {
-      const index = parseInt(item.dataset.index, 10);
-      openLightbox(index);
+      openLightbox(item.dataset.group, parseInt(item.dataset.index, 10));
     }
   });
 
-  document.addEventListener('keydown', function(e) {
+  // 绑定灯箱交互（不用内联 onclick，避免脚本被包进 IIFE 后函数不可见）
+  const lightboxEl = document.getElementById('lightbox');
+  const lightboxContent = lightboxEl.querySelector('.lightbox-content');
+  lightboxEl.addEventListener('click', closeLightbox);
+  lightboxContent.addEventListener('click', function (e) { e.stopPropagation(); });
+  lightboxContent.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+  lightboxContent.querySelector('.lightbox-prev').addEventListener('click', prevImage);
+  lightboxContent.querySelector('.lightbox-next').addEventListener('click', nextImage);
+
+  document.addEventListener('keydown', function (e) {
     if (document.getElementById('lightbox').classList.contains('active')) {
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowLeft') prevImage();
