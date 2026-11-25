@@ -33,7 +33,7 @@ const galleryItems = [
 ];
 ---
 
-<section id="gallery" class="container" style="padding-top: 120px;">
+<section id="gallery" class="container" style="padding-top: 48px;">
   <h2 class="section-title">成果展示</h2>
   <div class="gallery-grid">
     {galleryItems.map((item, index) => (
@@ -42,9 +42,9 @@ const galleryItems = [
         data-index={index}
       >
         <div class="gallery-image-wrapper">
-          <img 
-            src={item.image} 
-            alt={item.title} 
+          <img
+            src={item.image}
+            alt={item.title}
             loading="lazy"
             class="gallery-image"
           />
